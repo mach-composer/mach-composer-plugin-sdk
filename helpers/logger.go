@@ -105,6 +105,10 @@ func (l *Logger) ResetNamed(name string) hclog.Logger {
 	return l
 }
 
+func (l *Logger) GetLevel() hclog.Level {
+	return hclog.Level(logrus.GetLevel())
+}
+
 // Updates the level. This should affect all related loggers as well,
 // unless they were created with IndependentLevels. If an
 // implementation cannot update the level on the fly, it should no-op.
