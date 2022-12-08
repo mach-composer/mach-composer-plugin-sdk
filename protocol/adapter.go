@@ -2,6 +2,7 @@ package protocol
 
 import (
 	"github.com/hashicorp/go-hclog"
+	"github.com/sirupsen/logrus"
 
 	"github.com/mach-composer/mach-composer-plugin-sdk/schema"
 )
@@ -42,75 +43,112 @@ func (p *Adapter) IsEnabled() bool {
 
 func (p *Adapter) SetRemoteStateBackend(data map[string]any) error {
 	if p.fn.SetRemoteStateBackend != nil {
-		return p.fn.SetRemoteStateBackend(data)
+		if err := p.fn.SetRemoteStateBackend(data); err != nil {
+			logrus.Errorf("SetRemoteStateBackend: %s", err)
+			return err
+		}
 	}
 	return nil
 }
 
 func (p *Adapter) SetGlobalConfig(data map[string]any) error {
 	if p.fn.SetGlobalConfig != nil {
-		return p.fn.SetGlobalConfig(data)
+		if err := p.fn.SetGlobalConfig(data); err != nil {
+			logrus.Errorf("SetGlobalConfig: %s", err)
+			return err
+		}
 	}
 	return nil
 }
 func (p *Adapter) SetSiteConfig(site string, data map[string]any) error {
 	if p.fn.SetSiteConfig != nil {
-		return p.fn.SetSiteConfig(site, data)
+		if err := p.fn.SetSiteConfig(site, data); err != nil {
+			logrus.Errorf("SetSiteConfig: %s", err)
+			return err
+		}
 	}
 	return nil
 }
 
 func (p *Adapter) SetSiteComponentConfig(site string, component string, data map[string]any) error {
 	if p.fn.SetSiteComponentConfig != nil {
-		return p.fn.SetSiteComponentConfig(site, component, data)
+		if err := p.fn.SetSiteComponentConfig(site, component, data); err != nil {
+			logrus.Errorf("SetSiteComponentConfig: %s", err)
+			return err
+		}
 	}
 	return nil
 }
 
 func (p *Adapter) SetSiteEndpointsConfig(site string, data map[string]any) error {
 	if p.fn.SetSiteEndpointsConfig != nil {
-		return p.fn.SetSiteEndpointsConfig(site, data)
+		if err := p.fn.SetSiteEndpointsConfig(site, data); err != nil {
+			logrus.Errorf("SetSiteEndpointsConfig: %s", err)
+			return err
+		}
 	}
 	return nil
 }
 
 func (p *Adapter) SetComponentConfig(component string, data map[string]any) error {
 	if p.fn.SetComponentConfig != nil {
-		return p.fn.SetComponentConfig(component, data)
+		if err := p.fn.SetComponentConfig(component, data); err != nil {
+			logrus.Errorf("SetComponentConfig: %s", err)
+			return err
+		}
 	}
 	return nil
 }
 
 func (p *Adapter) SetComponentEndpointsConfig(component string, endpoints map[string]string) error {
 	if p.fn.SetComponentEndpointsConfig != nil {
-		return p.fn.SetComponentEndpointsConfig(component, endpoints)
+		if err := p.fn.SetComponentEndpointsConfig(component, endpoints); err != nil {
+			logrus.Errorf("SetComponentEndpointsConfig: %s", err)
+			return err
+		}
 	}
 	return nil
 }
 func (p *Adapter) RenderTerraformStateBackend(site string) (string, error) {
 	if p.fn.RenderTerraformStateBackend != nil {
-		return p.fn.RenderTerraformStateBackend(site)
+		result, err := p.fn.RenderTerraformStateBackend(site)
+		if err != nil {
+			logrus.Errorf("RenderTerraformStateBackend: %s", err)
+		}
+		return result, err
 	}
 	return "", nil
 }
 
 func (p *Adapter) RenderTerraformProviders(site string) (string, error) {
 	if p.fn.RenderTerraformProviders != nil {
-		return p.fn.RenderTerraformProviders(site)
+		result, err := p.fn.RenderTerraformProviders(site)
+		if err != nil {
+			logrus.Errorf("RenderTerraformProviders: %s", err)
+		}
+		return result, err
 	}
 	return "", nil
 }
 
 func (p *Adapter) RenderTerraformResources(site string) (string, error) {
 	if p.fn.RenderTerraformResources != nil {
-		return p.fn.RenderTerraformResources(site)
+		result, err := p.fn.RenderTerraformResources(site)
+		if err != nil {
+			logrus.Errorf("RenderTerraformResources: %s", err)
+		}
+		return result, err
 	}
 	return "", nil
 }
 
 func (p *Adapter) RenderTerraformComponent(site, component string) (*schema.ComponentSchema, error) {
 	if p.fn.RenderTerraformComponent != nil {
-		return p.fn.RenderTerraformComponent(site, component)
+		result, err := p.fn.RenderTerraformComponent(site, component)
+		if err != nil {
+			logrus.Errorf("RenderTerraformComponent: %s", err)
+		}
+		return result, err
 	}
 	return nil, nil
 }
