@@ -50,6 +50,15 @@ func (p *PluginRPC) Configure(environment string, provider string) error {
 	return resp.Err
 }
 
+func (p *PluginRPC) GetValidationSchema() (*schema.ValidationSchema, error) {
+	resp := GetValidationSchemaOutput{}
+	err := p.client.Call("Plugin.GetValidationSchema", new(any), &resp)
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Result, nil
+}
+
 func (p *PluginRPC) SetRemoteStateBackend(data map[string]any) error {
 	param := SetRemoteStateBackendInput{
 		Data: data,

@@ -43,6 +43,13 @@ func (p *Adapter) IsEnabled() bool {
 	return true
 }
 
+func (p *Adapter) GetValidationSchema() (*schema.ValidationSchema, error) {
+	if p.fn.GetValidationSchema != nil {
+		return p.fn.GetValidationSchema()
+	}
+	return &schema.ValidationSchema{}, nil
+}
+
 func (p *Adapter) SetRemoteStateBackend(data map[string]any) error {
 	if p.fn.SetRemoteStateBackend != nil {
 		if err := p.fn.SetRemoteStateBackend(data); err != nil {

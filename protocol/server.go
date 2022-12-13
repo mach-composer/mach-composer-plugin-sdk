@@ -25,6 +25,13 @@ func (s *PluginRPCServer) Configure(args ConfigureInput, resp *ErrorOutput) erro
 	return nil
 }
 
+func (p *PluginRPCServer) GetValidationSchema(args any, resp *GetValidationSchemaOutput) error {
+	result, err := p.Impl.GetValidationSchema()
+	resp.Result = *result
+	resp.Err = err
+	return nil
+}
+
 func (s *PluginRPCServer) SetRemoteStateBackend(args SetRemoteStateBackendInput, resp *ErrorOutput) error {
 	err := s.Impl.SetRemoteStateBackend(args.Data)
 	resp.Err = err

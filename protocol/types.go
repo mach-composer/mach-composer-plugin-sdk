@@ -7,6 +7,11 @@ type ConfigureInput struct {
 	Provider    string
 }
 
+type GetValidationSchemaOutput struct {
+	Result schema.ValidationSchema
+	Err    error
+}
+
 type SetRemoteStateBackendInput struct {
 	Data map[string]any
 }

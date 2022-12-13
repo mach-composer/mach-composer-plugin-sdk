@@ -7,6 +7,8 @@ type MachComposerPlugin interface {
 
 	Configure(environment string, provider string) error
 
+	GetValidationSchema() (*ValidationSchema, error)
+
 	SetRemoteStateBackend(data map[string]any) error
 
 	SetGlobalConfig(data map[string]any) error
