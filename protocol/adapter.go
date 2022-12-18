@@ -89,10 +89,10 @@ func (p *Adapter) SetSiteComponentConfig(site string, component string, data map
 	return nil
 }
 
-func (p *Adapter) SetSiteEndpointsConfig(site string, data map[string]any) error {
-	if p.fn.SetSiteEndpointsConfig != nil {
 		if err := p.fn.SetSiteEndpointsConfig(site, data); err != nil {
 			p.Logger.Error("SetSiteEndpointsConfig: %s", err)
+func (a *Adapter) SetSiteEndpointConfig(site string, name string, data map[string]any) error {
+	if a.plugin.SetSiteEndpointConfig == nil {
 			return err
 		}
 	}

@@ -60,7 +60,7 @@ func (s *PluginRPCServer) SetSiteComponentConfig(args SetSiteComponentConfigInpu
 	return nil
 }
 
-func (s *PluginRPCServer) SetSiteEndpointsConfig(args SetSiteComponentConfigInput, resp *SetSiteComponentConfigOutput) error {
+func (s *PluginRPCServer) SetSiteEndpointConfig(args SetSiteEndpointsConfigInput, resp *SetSiteEndpointsConfigOutput) error {
 	err := s.adapter.SetSiteEndpointConfig(args.Site, args.Name, args.Data)
 	resp.Err = wrapError(err)
 	return nil

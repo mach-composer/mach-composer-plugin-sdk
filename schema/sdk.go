@@ -12,7 +12,7 @@ type ValidationSchema struct {
 	RemoteStateSchema              map[string]any
 	SiteConfigSchema               map[string]any
 	SiteComponentConfigSchema      map[string]any
-	SiteEndpointsConfig            map[string]any
+	SiteEndpointConfig             map[string]any
 	ComponentConfigSchema          map[string]any
 	ComponentEndpointsConfigSchema map[string]any
 }
@@ -28,7 +28,7 @@ type PluginSchema struct {
 	SetGlobalConfig             func(data map[string]any) error
 	SetSiteConfig               func(site string, data map[string]any) error
 	SetSiteComponentConfig      func(site string, component string, data map[string]any) error
-	SetSiteEndpointsConfig      func(site string, data map[string]any) error
+	SetSiteEndpointConfig       func(site string, name string, data map[string]any) error
 	SetComponentConfig          func(component string, data map[string]any) error
 	SetComponentEndpointsConfig func(component string, endpoints map[string]string) error
 

@@ -16,6 +16,8 @@ type PluginRPC struct {
 	identifier string
 }
 
+var _ schema.MachComposerPlugin = (*PluginRPC)(nil)
+
 func (p *PluginRPC) Identifier() string {
 	// return p.identifier
 	var resp string
@@ -110,13 +112,13 @@ func (p *PluginRPC) SetSiteComponentConfig(site string, component string, data m
 	return unwrapError(p.name, resp.Err)
 }
 
-func (p *PluginRPC) SetSiteEndpointsConfig(site string, data map[string]any) error {
+func (p *PluginRPC) SetSiteEndpointConfig(site string, name string, data map[string]any) error {
 	param := SetSiteEndpointsConfigInput{
 		Site: site,
 		Data: data,
 	}
 	resp := SetSiteEndpointsConfigOutput{}
-	err := p.client.Call("Plugin.SetSiteEndpointsConfig", param, &resp)
+	err := p.client.Call("Plugin.SetSiteEndpointConfig", param, &resp)
 	if err != nil {
 		return err
 	}

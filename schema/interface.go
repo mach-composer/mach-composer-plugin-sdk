@@ -17,7 +17,7 @@ type MachComposerPlugin interface {
 
 	SetSiteComponentConfig(site string, component string, data map[string]any) error
 
-	SetSiteEndpointsConfig(site string, data map[string]any) error
+	SetSiteEndpointConfig(site string, name string, data map[string]any) error
 
 	SetComponentConfig(component string, data map[string]any) error
 
