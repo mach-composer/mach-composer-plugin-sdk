@@ -6,14 +6,15 @@ package protocol
 import (
 	"net/rpc"
 
-	"github.com/sirupsen/logrus"
+	"github.com/hashicorp/go-hclog"
 
 	"github.com/mach-composer/mach-composer-plugin-sdk/schema"
 )
 
 type PluginRPC struct {
-	client     *rpc.Client
-	identifier string
+	client *rpc.Client
+	name   string
+	logger hclog.Logger
 }
 
 var _ schema.MachComposerPlugin = (*PluginRPC)(nil)
@@ -23,7 +24,7 @@ func (p *PluginRPC) Identifier() string {
 	var resp string
 	err := p.client.Call("Plugin.Identifier", new(any), &resp)
 	if err != nil {
-		logrus.Error(err)
+		p.logger.Error(err.Error(), "error", err)
 		return ""
 	}
 	return resp
@@ -33,7 +34,7 @@ func (p *PluginRPC) IsEnabled() bool {
 	var resp bool
 	err := p.client.Call("Plugin.IsEnabled", new(any), &resp)
 	if err != nil {
-		logrus.Error(err)
+		p.logger.Error(err.Error(), "error", err)
 		return false
 	}
 	return resp
@@ -159,7 +160,7 @@ func (p *PluginRPC) RenderTerraformStateBackend(site string) (string, error) {
 	resp := RenderTerraformStateBackendOutput{}
 	err := p.client.Call("Plugin.RenderTerraformStateBackend", param, &resp)
 	if err != nil {
-		logrus.Error(err)
+		p.logger.Error(err.Error(), "error", err)
 		return "", err
 	}
 	return resp.Result, unwrapError(p.name, resp.Err)

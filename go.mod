@@ -5,7 +5,6 @@ go 1.19
 require (
 	github.com/hashicorp/go-hclog v1.3.1
 	github.com/hashicorp/go-plugin v1.4.6
-	github.com/sirupsen/logrus v1.9.0
 )
 
 require (
