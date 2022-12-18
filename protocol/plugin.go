@@ -14,7 +14,12 @@ type Plugin struct {
 }
 
 func (p *Plugin) Server(*plugin.MuxBroker) (any, error) {
-	return &PluginRPCServer{Impl: p.Impl}, nil
+	result := &PluginRPCServer{
+		adapter: p.Adapter,
+		name:    p.Identifier,
+		logger:  p.Logger,
+	}
+	return result, nil
 }
 
 func (p *Plugin) Client(b *plugin.MuxBroker, c *rpc.Client) (any, error) {

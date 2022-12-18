@@ -3,81 +3,85 @@ package protocol
 // This is the server interface for a plugin. This will be used in the plugin
 // to make the functions available to the client (mach-composer)
 
-import "github.com/mach-composer/mach-composer-plugin-sdk/schema"
+import (
+	"github.com/hashicorp/go-hclog"
+)
 
 type PluginRPCServer struct {
-	Impl schema.MachComposerPlugin
+	adapter *Adapter
+	name    string
+	logger  hclog.Logger
 }
 
 func (s *PluginRPCServer) Identifier(args any, resp *string) error {
-	*resp = s.Impl.Identifier()
+	*resp = s.adapter.Identifier()
 	return nil
 }
 
 func (s *PluginRPCServer) IsEnabled(args any, resp *bool) error {
-	*resp = s.Impl.IsEnabled()
+	*resp = s.adapter.IsEnabled()
 	return nil
 }
 
 func (s *PluginRPCServer) Configure(args ConfigureInput, resp *ErrorOutput) error {
-	err := s.Impl.Configure(args.Environment, args.Provider)
 	resp.Err = err
+	err := s.adapter.Configure(args.Environment, args.Provider)
 	return nil
 }
 
-func (p *PluginRPCServer) GetValidationSchema(args any, resp *GetValidationSchemaOutput) error {
-	result, err := p.Impl.GetValidationSchema()
+func (s *PluginRPCServer) GetValidationSchema(args any, resp *GetValidationSchemaOutput) error {
+	result, err := s.adapter.GetValidationSchema()
 	resp.Result = *result
 	resp.Err = err
 	return nil
 }
 
 func (s *PluginRPCServer) SetRemoteStateBackend(args SetRemoteStateBackendInput, resp *ErrorOutput) error {
-	err := s.Impl.SetRemoteStateBackend(args.Data)
 	resp.Err = err
+	err := s.adapter.SetRemoteStateBackend(args.Data)
 	return nil
 }
 
 func (s *PluginRPCServer) SetGlobalConfig(args SetGlobalConfigInput, resp *ErrorOutput) error {
-	err := s.Impl.SetGlobalConfig(args.Data)
 	resp.Err = err
+	err := s.adapter.SetGlobalConfig(args.Data)
 	return nil
 }
 
 func (s *PluginRPCServer) SetSiteConfig(args SetSiteConfigInput, resp *ErrorOutput) error {
-	err := s.Impl.SetSiteConfig(args.Name, args.Data)
 	resp.Err = err
+	resp.Err = wrapError(err)
 	return nil
 }
 
 func (s *PluginRPCServer) SetSiteComponentConfig(args SetSiteComponentConfigInput, resp *SetSiteComponentConfigOutput) error {
-	err := s.Impl.SetSiteComponentConfig(args.Site, args.Component, args.Data)
 	resp.Err = err
+	err := s.adapter.SetSiteComponentConfig(args.Site, args.Component, args.Data)
 	return nil
 }
 
 func (s *PluginRPCServer) SetSiteEndpointsConfig(args SetSiteComponentConfigInput, resp *SetSiteComponentConfigOutput) error {
-	err := s.Impl.SetSiteEndpointsConfig(args.Site, args.Data)
 	resp.Err = err
+	err := s.adapter.SetSiteEndpointConfig(args.Site, args.Name, args.Data)
 	return nil
 }
 
 func (s *PluginRPCServer) SetComponentConfig(args SetSiteComponentConfigInput, resp *SetSiteComponentConfigOutput) error {
-	err := s.Impl.SetComponentConfig(args.Component, args.Data)
 	resp.Err = err
+	err := s.adapter.SetComponentConfig(args.Component, args.Data)
 	return nil
 }
 
 func (s *PluginRPCServer) SetComponentEndpointsConfig(args SetComponentEndpointsConfigInput, resp *SetSiteComponentConfigOutput) error {
-	err := s.Impl.SetComponentEndpointsConfig(args.Component, args.Endpoints)
 	resp.Err = err
+	err := s.adapter.SetComponentEndpointsConfig(args.Component, args.Endpoints)
 	return nil
 }
 
 func (s *PluginRPCServer) RenderTerraformStateBackend(
 	args RenderTerraformStateBackendInput,
 	resp *RenderTerraformStateBackendOutput) error {
-	result, err := s.Impl.RenderTerraformStateBackend(args.Site)
+	result, err := s.adapter.RenderTerraformStateBackend(args.Site)
 	resp.Result = result
 	resp.Err = err
 	return nil
@@ -86,7 +90,7 @@ func (s *PluginRPCServer) RenderTerraformStateBackend(
 func (s *PluginRPCServer) RenderTerraformProviders(
 	args RenderTerraformProvidersInput,
 	resp *RenderTerraformProvidersOutput) error {
-	result, err := s.Impl.RenderTerraformProviders(args.Site)
+	result, err := s.adapter.RenderTerraformProviders(args.Site)
 	resp.Result = result
 	resp.Err = err
 	return nil
@@ -95,7 +99,7 @@ func (s *PluginRPCServer) RenderTerraformProviders(
 func (s *PluginRPCServer) RenderTerraformResources(
 	args RenderTerraformResourcesInput,
 	resp *RenderTerraformResourcesOutput) error {
-	result, err := s.Impl.RenderTerraformResources(args.Site)
+	result, err := s.adapter.RenderTerraformResources(args.Site)
 	resp.Result = result
 	resp.Err = err
 	return nil
@@ -104,7 +108,7 @@ func (s *PluginRPCServer) RenderTerraformResources(
 func (s *PluginRPCServer) RenderTerraformComponent(
 	args RenderTerraformComponentInput,
 	resp *RenderTerraformComponentOutput) error {
-	result, err := s.Impl.RenderTerraformComponent(args.Site, args.Component)
+	result, err := s.adapter.RenderTerraformComponent(args.Site, args.Component)
 	resp.Result = *result
 	resp.Err = err
 	return nil

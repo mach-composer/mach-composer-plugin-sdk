@@ -16,22 +16,23 @@ func init() {
 	gob.Register([]interface{}{})
 }
 
-func ServePlugin(p schema.MachComposerPlugin) {
+func ServePlugin(a schema.MachComposerPlugin) {
 	logger := hclog.New(&hclog.LoggerOptions{
-		Name:       p.Identifier(),
+		Name:       a.Identifier(),
 		Level:      hclog.LevelFromString("DEBUG"),
 		JSONFormat: true,
 	})
 	log.SetOutput(logger.StandardWriter(&hclog.StandardLoggerOptions{InferLevels: true}))
 	hclog.SetDefault(logger)
 
-	if val, ok := p.(*protocol.Adapter); ok {
-		val.SetLogger(logger)
+	adapter, ok := a.(*protocol.Adapter)
+	if !ok {
+		panic("plugin should use protocol.Adapter")
 	}
 
 	// pluginMap is the map of plugins we can dispense.
 	var pluginMap = map[string]plugin.Plugin{
-		"MachComposerPlugin": &protocol.Plugin{Impl: p},
+		"MachComposerPlugin": &protocol.Plugin{Adapter: adapter, Logger: logger},
 	}
 
 	plugin.Serve(&plugin.ServeConfig{
