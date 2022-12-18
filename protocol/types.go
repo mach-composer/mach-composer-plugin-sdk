@@ -1,6 +1,8 @@
 package protocol
 
-import "github.com/mach-composer/mach-composer-plugin-sdk/schema"
+import (
+	"github.com/mach-composer/mach-composer-plugin-sdk/schema"
+)
 
 type ConfigureInput struct {
 	Environment string
@@ -9,7 +11,7 @@ type ConfigureInput struct {
 
 type GetValidationSchemaOutput struct {
 	Result schema.ValidationSchema
-	Err    error
+	Err    *PluginError
 }
 
 type SetRemoteStateBackendInput struct {
@@ -27,16 +29,17 @@ type SetSiteComponentConfigInput struct {
 }
 
 type SetSiteComponentConfigOutput struct {
-	Err error
+	Err *PluginError
 }
 
 type SetSiteEndpointsConfigInput struct {
 	Site string
+	Name string
 	Data map[string]any
 }
 
 type SetSiteEndpointsConfigOutput struct {
-	Err error
+	Err *PluginError
 }
 
 type SetComponentConfigInput struct {
@@ -45,7 +48,7 @@ type SetComponentConfigInput struct {
 }
 
 type SetComponentConfigOutput struct {
-	Err error
+	Err *PluginError
 }
 
 type SetComponentEndpointsConfigInput struct {
@@ -54,7 +57,7 @@ type SetComponentEndpointsConfigInput struct {
 }
 
 type SetComponentEndpointsConfigOutput struct {
-	Err error
+	Err *PluginError
 }
 
 type SetSiteConfigInput struct {
@@ -68,7 +71,7 @@ type RenderTerraformStateBackendInput struct {
 
 type RenderTerraformStateBackendOutput struct {
 	Result string
-	Err    error
+	Err    *PluginError
 }
 
 type RenderTerraformProvidersInput struct {
@@ -77,7 +80,7 @@ type RenderTerraformProvidersInput struct {
 
 type RenderTerraformProvidersOutput struct {
 	Result string
-	Err    error
+	Err    *PluginError
 }
 
 type RenderTerraformResourcesInput struct {
@@ -86,7 +89,7 @@ type RenderTerraformResourcesInput struct {
 
 type RenderTerraformResourcesOutput struct {
 	Result string
-	Err    error
+	Err    *PluginError
 }
 
 type RenderTerraformComponentInput struct {
@@ -96,9 +99,9 @@ type RenderTerraformComponentInput struct {
 
 type RenderTerraformComponentOutput struct {
 	Result schema.ComponentSchema
-	Err    error
+	Err    *PluginError
 }
 
 type ErrorOutput struct {
-	Err error
+	Err *PluginError
 }

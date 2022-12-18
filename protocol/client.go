@@ -47,7 +47,7 @@ func (p *PluginRPC) Configure(environment string, provider string) error {
 	if err != nil {
 		return err
 	}
-	return resp.Err
+	return unwrapError(p.name, resp.Err)
 }
 
 func (p *PluginRPC) GetValidationSchema() (*schema.ValidationSchema, error) {
@@ -68,7 +68,7 @@ func (p *PluginRPC) SetRemoteStateBackend(data map[string]any) error {
 	if err != nil {
 		return err
 	}
-	return resp.Err
+	return unwrapError(p.name, resp.Err)
 }
 
 func (p *PluginRPC) SetGlobalConfig(data map[string]any) error {
@@ -80,7 +80,7 @@ func (p *PluginRPC) SetGlobalConfig(data map[string]any) error {
 	if err != nil {
 		return err
 	}
-	return resp.Err
+	return unwrapError(p.name, resp.Err)
 }
 
 func (p *PluginRPC) SetSiteConfig(name string, data map[string]any) error {
@@ -93,7 +93,7 @@ func (p *PluginRPC) SetSiteConfig(name string, data map[string]any) error {
 	if err != nil {
 		return err
 	}
-	return resp.Err
+	return unwrapError(p.name, resp.Err)
 }
 
 func (p *PluginRPC) SetSiteComponentConfig(site string, component string, data map[string]any) error {
@@ -107,7 +107,7 @@ func (p *PluginRPC) SetSiteComponentConfig(site string, component string, data m
 	if err != nil {
 		return err
 	}
-	return resp.Err
+	return unwrapError(p.name, resp.Err)
 }
 
 func (p *PluginRPC) SetSiteEndpointsConfig(site string, data map[string]any) error {
@@ -120,7 +120,7 @@ func (p *PluginRPC) SetSiteEndpointsConfig(site string, data map[string]any) err
 	if err != nil {
 		return err
 	}
-	return resp.Err
+	return unwrapError(p.name, resp.Err)
 }
 
 func (p *PluginRPC) SetComponentConfig(component string, data map[string]any) error {
@@ -133,7 +133,7 @@ func (p *PluginRPC) SetComponentConfig(component string, data map[string]any) er
 	if err != nil {
 		return err
 	}
-	return resp.Err
+	return unwrapError(p.name, resp.Err)
 }
 
 func (p *PluginRPC) SetComponentEndpointsConfig(component string, endpoints map[string]string) error {
@@ -146,8 +146,7 @@ func (p *PluginRPC) SetComponentEndpointsConfig(component string, endpoints map[
 	if err != nil {
 		return err
 	}
-	return resp.Err
-
+	return unwrapError(p.name, resp.Err)
 }
 
 func (p *PluginRPC) RenderTerraformStateBackend(site string) (string, error) {
@@ -160,7 +159,7 @@ func (p *PluginRPC) RenderTerraformStateBackend(site string) (string, error) {
 		logrus.Error(err)
 		return "", err
 	}
-	return resp.Result, resp.Err
+	return resp.Result, unwrapError(p.name, resp.Err)
 }
 
 func (p *PluginRPC) RenderTerraformProviders(site string) (string, error) {
@@ -172,7 +171,7 @@ func (p *PluginRPC) RenderTerraformProviders(site string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return resp.Result, resp.Err
+	return resp.Result, unwrapError(p.name, resp.Err)
 }
 
 func (p *PluginRPC) RenderTerraformResources(site string) (string, error) {
@@ -184,7 +183,7 @@ func (p *PluginRPC) RenderTerraformResources(site string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return resp.Result, resp.Err
+	return resp.Result, unwrapError(p.name, resp.Err)
 }
 
 func (p *PluginRPC) RenderTerraformComponent(site string, component string) (*schema.ComponentSchema, error) {
@@ -197,5 +196,5 @@ func (p *PluginRPC) RenderTerraformComponent(site string, component string) (*sc
 	if err != nil {
 		return nil, err
 	}
-	return &resp.Result, resp.Err
+	return &resp.Result, unwrapError(p.name, resp.Err)
 }

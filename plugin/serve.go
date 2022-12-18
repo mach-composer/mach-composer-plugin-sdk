@@ -12,8 +12,9 @@ import (
 )
 
 func init() {
-	gob.Register(map[string]interface{}{})
-	gob.Register([]interface{}{})
+	gob.Register(map[string]any{})
+	gob.Register([]any{})
+	gob.Register(protocol.PluginError{})
 }
 
 func ServePlugin(a schema.MachComposerPlugin) {
