@@ -63,7 +63,7 @@ func (p *PluginRPC) GetValidationSchema() (*schema.ValidationSchema, error) {
 
 func (p *PluginRPC) SetRemoteStateBackend(data map[string]any) error {
 	param := SetRemoteStateBackendInput{
-		Data: data,
+		Data: makeNil(data),
 	}
 	resp := ErrorOutput{}
 	err := p.client.Call("Plugin.SetRemoteStateBackend", param, &resp)
@@ -75,7 +75,7 @@ func (p *PluginRPC) SetRemoteStateBackend(data map[string]any) error {
 
 func (p *PluginRPC) SetGlobalConfig(data map[string]any) error {
 	param := SetGlobalConfigInput{
-		Data: data,
+		Data: makeNil(data),
 	}
 	resp := ErrorOutput{}
 	err := p.client.Call("Plugin.SetGlobalConfig", param, &resp)
@@ -88,7 +88,7 @@ func (p *PluginRPC) SetGlobalConfig(data map[string]any) error {
 func (p *PluginRPC) SetSiteConfig(name string, data map[string]any) error {
 	param := SetSiteConfigInput{
 		Name: name,
-		Data: data,
+		Data: makeNil(data),
 	}
 	resp := ErrorOutput{}
 	err := p.client.Call("Plugin.SetSiteConfig", param, &resp)
@@ -102,7 +102,7 @@ func (p *PluginRPC) SetSiteComponentConfig(site string, component string, data m
 	param := SetSiteComponentConfigInput{
 		Site:      site,
 		Component: component,
-		Data:      data,
+		Data:      makeNil(data),
 	}
 	resp := SetSiteComponentConfigOutput{}
 	err := p.client.Call("Plugin.SetSiteComponentConfig", param, &resp)
@@ -115,7 +115,8 @@ func (p *PluginRPC) SetSiteComponentConfig(site string, component string, data m
 func (p *PluginRPC) SetSiteEndpointConfig(site string, name string, data map[string]any) error {
 	param := SetSiteEndpointsConfigInput{
 		Site: site,
-		Data: data,
+		Name: name,
+		Data: makeNil(data),
 	}
 	resp := SetSiteEndpointsConfigOutput{}
 	err := p.client.Call("Plugin.SetSiteEndpointConfig", param, &resp)
@@ -128,7 +129,7 @@ func (p *PluginRPC) SetSiteEndpointConfig(site string, name string, data map[str
 func (p *PluginRPC) SetComponentConfig(component string, data map[string]any) error {
 	param := SetComponentConfigInput{
 		Component: component,
-		Data:      data,
+		Data:      makeNil(data),
 	}
 	resp := SetComponentConfigOutput{}
 	err := p.client.Call("Plugin.SetComponentConfig", param, &resp)
@@ -199,4 +200,11 @@ func (p *PluginRPC) RenderTerraformComponent(site string, component string) (*sc
 		return nil, err
 	}
 	return &resp.Result, unwrapError(p.name, resp.Err)
+}
+
+func makeNil[T any](data map[string]T) map[string]T {
+	if len(data) == 0 {
+		return nil
+	}
+	return data
 }

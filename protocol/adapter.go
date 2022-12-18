@@ -1,161 +1,223 @@
 package protocol
 
 import (
+	"fmt"
+
 	"github.com/hashicorp/go-hclog"
 
 	"github.com/mach-composer/mach-composer-plugin-sdk/schema"
 )
 
+// Adapter wraps a PluginSchema
 type Adapter struct {
-	Logger hclog.Logger
-	fn     *schema.PluginSchema
+	name   string
+	plugin *schema.PluginSchema
+	schema *schema.ValidationSchema
+	logger hclog.Logger
 }
 
-func NewAdapter(s *schema.PluginSchema, logger hclog.Logger) *Adapter {
+var _ schema.MachComposerPlugin = (*Adapter)(nil)
+
+func NewAdapter(plugin *schema.PluginSchema, logger hclog.Logger) *Adapter {
+	var schema *schema.ValidationSchema
+	if plugin.GetValidationSchema != nil {
+		var err error
+		schema, err = plugin.GetValidationSchema()
+		if err != nil {
+			panic(err)
+		}
+	}
+
 	return &Adapter{
-		Logger: logger,
-		fn:     s,
+		name:   plugin.Identifier,
+		plugin: plugin,
+		schema: schema,
+		logger: logger,
 	}
 }
 
-func (c *Adapter) SetLogger(logger hclog.Logger) {
-	c.Logger = logger
-}
-
-func (p *Adapter) Configure(environment, provider string) error {
-	if p.fn.Configure != nil {
-		if err := p.fn.Configure(environment, provider); err != nil {
-			p.Logger.Error("Configure: %s", err)
+func (a *Adapter) Configure(environment, provider string) error {
+	if a.plugin.Configure != nil {
+		if err := a.plugin.Configure(environment, provider); err != nil {
+			a.logger.Debug("Configure error: %s", err)
 			return err
 		}
 	}
 	return nil
 }
 
-func (c *Adapter) Identifier() string {
-	return c.fn.Identifier
+func (a *Adapter) Identifier() string {
+	return a.plugin.Identifier
 }
 
-func (p *Adapter) IsEnabled() bool {
-	if p.fn.IsEnabled != nil {
-		return p.fn.IsEnabled()
+func (a *Adapter) IsEnabled() bool {
+	if a.plugin.IsEnabled != nil {
+		return a.plugin.IsEnabled()
 	}
 	return true
 }
 
-func (p *Adapter) GetValidationSchema() (*schema.ValidationSchema, error) {
-	if p.fn.GetValidationSchema != nil {
-		return p.fn.GetValidationSchema()
+func (a *Adapter) GetValidationSchema() (*schema.ValidationSchema, error) {
+	if a.plugin.GetValidationSchema != nil {
+		return a.plugin.GetValidationSchema()
 	}
 	return &schema.ValidationSchema{}, nil
 }
 
-func (p *Adapter) SetRemoteStateBackend(data map[string]any) error {
-	if p.fn.SetRemoteStateBackend != nil {
-		if err := p.fn.SetRemoteStateBackend(data); err != nil {
-			p.Logger.Error("SetRemoteStateBackend: %s", err)
+func (a *Adapter) SetRemoteStateBackend(data map[string]any) error {
+	if a.plugin.SetRemoteStateBackend == nil {
+		return nil
+	}
+
+	if a.schema != nil {
+		if err := a.schema.Validate(a.schema.RemoteStateSchema, data); err != nil {
 			return err
 		}
+	}
+
+	if err := a.plugin.SetRemoteStateBackend(data); err != nil {
+		a.logger.Debug(fmt.Sprintf("SetRemoteStateBackend error: %s", err))
+		return err
 	}
 	return nil
 }
 
-func (p *Adapter) SetGlobalConfig(data map[string]any) error {
-	if p.fn.SetGlobalConfig != nil {
-		if err := p.fn.SetGlobalConfig(data); err != nil {
-			p.Logger.Error("SetGlobalConfig: %s", err)
+func (a *Adapter) SetGlobalConfig(data map[string]any) error {
+	if a.plugin.SetGlobalConfig == nil {
+		return nil
+	}
+
+	if a.schema != nil && data != nil {
+		if err := a.schema.Validate(a.schema.GlobalConfigSchema, data); err != nil {
 			return err
 		}
 	}
+
+	if err := a.plugin.SetGlobalConfig(data); err != nil {
+		a.logger.Debug(fmt.Sprintf("SetGlobalConfig error: %s", err))
+		return err
+	}
 	return nil
 }
-func (p *Adapter) SetSiteConfig(site string, data map[string]any) error {
-	if p.fn.SetSiteConfig != nil {
-		if err := p.fn.SetSiteConfig(site, data); err != nil {
-			p.Logger.Error("SetSiteConfig: %s", err)
+func (a *Adapter) SetSiteConfig(site string, data map[string]any) error {
+	if a.plugin.SetSiteConfig == nil {
+		return nil
+	}
+
+	if a.schema != nil && data != nil {
+		if err := a.schema.Validate(a.schema.SiteConfigSchema, data); err != nil {
 			return err
 		}
+	}
+
+	if err := a.plugin.SetSiteConfig(site, data); err != nil {
+		a.logger.Debug(fmt.Sprintf("SetSiteConfig error: %s", err))
+		return err
 	}
 	return nil
 }
 
-func (p *Adapter) SetSiteComponentConfig(site string, component string, data map[string]any) error {
-	if p.fn.SetSiteComponentConfig != nil {
-		if err := p.fn.SetSiteComponentConfig(site, component, data); err != nil {
-			p.Logger.Error("SetSiteComponentConfig: %s", err)
+func (a *Adapter) SetSiteComponentConfig(site string, component string, data map[string]any) error {
+	if a.plugin.SetSiteComponentConfig == nil {
+		return nil
+	}
+
+	if a.schema != nil && data != nil {
+		if err := a.schema.Validate(a.schema.SiteComponentConfigSchema, data); err != nil {
 			return err
 		}
+	}
+
+	if err := a.plugin.SetSiteComponentConfig(site, component, data); err != nil {
+		a.logger.Debug(fmt.Sprintf("SetSiteComponentConfig error: %s", err))
+		return err
 	}
 	return nil
 }
 
-		if err := p.fn.SetSiteEndpointsConfig(site, data); err != nil {
-			p.Logger.Error("SetSiteEndpointsConfig: %s", err)
 func (a *Adapter) SetSiteEndpointConfig(site string, name string, data map[string]any) error {
 	if a.plugin.SetSiteEndpointConfig == nil {
+		return nil
+	}
+
+	if a.schema != nil && data != nil {
+		if err := a.schema.Validate(a.schema.SiteEndpointConfig, data); err != nil {
 			return err
 		}
+	}
+
+	if err := a.plugin.SetSiteEndpointConfig(site, name, data); err != nil {
+		a.logger.Debug(fmt.Sprintf("SetSiteEndpointConfig error: %s", err))
+		return err
 	}
 	return nil
 }
 
-func (p *Adapter) SetComponentConfig(component string, data map[string]any) error {
-	if p.fn.SetComponentConfig != nil {
-		if err := p.fn.SetComponentConfig(component, data); err != nil {
-			p.Logger.Error("SetComponentConfig: %s", err)
+func (a *Adapter) SetComponentConfig(component string, data map[string]any) error {
+	if a.plugin.SetComponentConfig == nil {
+		return nil
+	}
+
+	if a.schema != nil {
+		if err := a.schema.Validate(a.schema.ComponentConfigSchema, data); err != nil {
 			return err
 		}
+	}
+
+	if err := a.plugin.SetComponentConfig(component, data); err != nil {
+		a.logger.Debug(fmt.Sprintf("SetComponentConfig error: %s", err))
+		return err
 	}
 	return nil
 }
 
-func (p *Adapter) SetComponentEndpointsConfig(component string, endpoints map[string]string) error {
-	if p.fn.SetComponentEndpointsConfig != nil {
-		if err := p.fn.SetComponentEndpointsConfig(component, endpoints); err != nil {
-			p.Logger.Error("SetComponentEndpointsConfig: %s", err)
+func (a *Adapter) SetComponentEndpointsConfig(component string, endpoints map[string]string) error {
+	if a.plugin.SetComponentEndpointsConfig != nil {
+		if err := a.plugin.SetComponentEndpointsConfig(component, endpoints); err != nil {
+			a.logger.Debug(fmt.Sprintf("SetComponentEndpointsConfig error: %s", err))
 			return err
 		}
 	}
 	return nil
 }
-func (p *Adapter) RenderTerraformStateBackend(site string) (string, error) {
-	if p.fn.RenderTerraformStateBackend != nil {
-		result, err := p.fn.RenderTerraformStateBackend(site)
+func (a *Adapter) RenderTerraformStateBackend(site string) (string, error) {
+	if a.plugin.RenderTerraformStateBackend != nil {
+		result, err := a.plugin.RenderTerraformStateBackend(site)
 		if err != nil {
-			p.Logger.Error("RenderTerraformStateBackend: %s", err)
+			a.logger.Debug(fmt.Sprintf("RenderTerraformStateBackend error: %s", err))
 		}
 		return result, err
 	}
 	return "", nil
 }
 
-func (p *Adapter) RenderTerraformProviders(site string) (string, error) {
-	if p.fn.RenderTerraformProviders != nil {
-		result, err := p.fn.RenderTerraformProviders(site)
+func (a *Adapter) RenderTerraformProviders(site string) (string, error) {
+	if a.plugin.RenderTerraformProviders != nil {
+		result, err := a.plugin.RenderTerraformProviders(site)
 		if err != nil {
-			p.Logger.Error("RenderTerraformProviders: %s", err)
+			a.logger.Debug(fmt.Sprintf("RenderTerraformProviders error: %s", err))
 		}
 		return result, err
 	}
 	return "", nil
 }
 
-func (p *Adapter) RenderTerraformResources(site string) (string, error) {
-	if p.fn.RenderTerraformResources != nil {
-		result, err := p.fn.RenderTerraformResources(site)
+func (a *Adapter) RenderTerraformResources(site string) (string, error) {
+	if a.plugin.RenderTerraformResources != nil {
+		result, err := a.plugin.RenderTerraformResources(site)
 		if err != nil {
-			p.Logger.Error("RenderTerraformResources: %s", err)
+			a.logger.Debug("RenderTerraformResources error: %s", err)
 		}
 		return result, err
 	}
 	return "", nil
 }
 
-func (p *Adapter) RenderTerraformComponent(site, component string) (*schema.ComponentSchema, error) {
-	if p.fn.RenderTerraformComponent != nil {
-		result, err := p.fn.RenderTerraformComponent(site, component)
+func (a *Adapter) RenderTerraformComponent(site, component string) (*schema.ComponentSchema, error) {
+	if a.plugin.RenderTerraformComponent != nil {
+		result, err := a.plugin.RenderTerraformComponent(site, component)
 		if err != nil {
-			p.Logger.Error("RenderTerraformComponent: %s", err)
+			a.logger.Debug("RenderTerraformComponent error: %s", err)
 		}
 		return result, err
 	}

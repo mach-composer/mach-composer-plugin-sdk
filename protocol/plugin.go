@@ -3,13 +3,13 @@ package protocol
 import (
 	"net/rpc"
 
+	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
-
-	"github.com/mach-composer/mach-composer-plugin-sdk/schema"
 )
 
 type Plugin struct {
-	Impl       schema.MachComposerPlugin
+	Adapter    *Adapter
+	Logger     hclog.Logger
 	Identifier string
 }
 
