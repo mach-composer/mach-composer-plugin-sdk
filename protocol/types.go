@@ -98,7 +98,7 @@ type RenderTerraformComponentInput struct {
 }
 
 type RenderTerraformComponentOutput struct {
-	Result schema.ComponentSchema
+	Result *schema.ComponentSchema
 	Err    *PluginError
 }
 

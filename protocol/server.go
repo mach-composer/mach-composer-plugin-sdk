@@ -109,7 +109,7 @@ func (s *PluginRPCServer) RenderTerraformComponent(
 	args RenderTerraformComponentInput,
 	resp *RenderTerraformComponentOutput) error {
 	result, err := s.adapter.RenderTerraformComponent(args.Site, args.Component)
-	resp.Result = *result
+	resp.Result = result
 	resp.Err = wrapError(err)
 	return nil
 }

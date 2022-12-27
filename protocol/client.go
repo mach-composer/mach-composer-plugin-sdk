@@ -200,7 +200,7 @@ func (p *PluginRPC) RenderTerraformComponent(site string, component string) (*sc
 	if err != nil {
 		return nil, err
 	}
-	return &resp.Result, unwrapError(p.name, resp.Err)
+	return resp.Result, unwrapError(p.name, resp.Err)
 }
 
 func makeNil[T any](data map[string]T) map[string]T {
