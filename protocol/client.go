@@ -1,6 +1,6 @@
 package protocol
 
-// This is the client interface to a plugin. This will be used in mach-composer
+// This is the client interface to a pluginSchema. This will be used in mach-composer
 // to call the functions provided by the plugins (servers)
 
 import (
@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 
-	"github.com/mach-composer/mach-composer-plugin-sdk/schema"
+	"github.com/mach-composer/mach-composer-plugin-sdk/v1/schema"
 )
 
 type PluginRPC struct {
@@ -26,16 +26,6 @@ func (p *PluginRPC) Identifier() string {
 	if err != nil {
 		p.logger.Error(err.Error(), "error", err)
 		return ""
-	}
-	return resp
-}
-
-func (p *PluginRPC) IsEnabled() bool {
-	var resp bool
-	err := p.client.Call("Plugin.IsEnabled", new(any), &resp)
-	if err != nil {
-		p.logger.Error(err.Error(), "error", err)
-		return false
 	}
 	return resp
 }
@@ -62,19 +52,7 @@ func (p *PluginRPC) GetValidationSchema() (*schema.ValidationSchema, error) {
 	return &resp.Result, nil
 }
 
-func (p *PluginRPC) SetRemoteStateBackend(data map[string]any) error {
-	param := SetRemoteStateBackendInput{
-		Data: makeNil(data),
-	}
-	resp := ErrorOutput{}
-	err := p.client.Call("Plugin.SetRemoteStateBackend", param, &resp)
-	if err != nil {
-		return err
-	}
-	return unwrapError(p.name, resp.Err)
-}
-
-func (p *PluginRPC) SetGlobalConfig(data map[string]any) error {
+func (p *PluginRPC) SetGlobalConfig(meta schema.Meta, data map[string]any) error {
 	param := SetGlobalConfigInput{
 		Data: makeNil(data),
 	}
@@ -86,7 +64,7 @@ func (p *PluginRPC) SetGlobalConfig(data map[string]any) error {
 	return unwrapError(p.name, resp.Err)
 }
 
-func (p *PluginRPC) SetSiteConfig(name string, data map[string]any) error {
+func (p *PluginRPC) SetSiteConfig(name string, meta schema.Meta, data map[string]any) error {
 	param := SetSiteConfigInput{
 		Name: name,
 		Data: makeNil(data),
@@ -99,7 +77,7 @@ func (p *PluginRPC) SetSiteConfig(name string, data map[string]any) error {
 	return unwrapError(p.name, resp.Err)
 }
 
-func (p *PluginRPC) SetSiteComponentConfig(site string, component string, data map[string]any) error {
+func (p *PluginRPC) SetSiteComponentConfig(site string, component string, meta schema.Meta, data map[string]any) error {
 	param := SetSiteComponentConfigInput{
 		Site:      site,
 		Component: component,
@@ -113,7 +91,7 @@ func (p *PluginRPC) SetSiteComponentConfig(site string, component string, data m
 	return unwrapError(p.name, resp.Err)
 }
 
-func (p *PluginRPC) SetSiteEndpointConfig(site string, name string, data map[string]any) error {
+func (p *PluginRPC) SetSiteEndpointConfig(site string, name string, meta schema.Meta, data map[string]any) error {
 	param := SetSiteEndpointsConfigInput{
 		Site: site,
 		Name: name,
@@ -127,7 +105,7 @@ func (p *PluginRPC) SetSiteEndpointConfig(site string, name string, data map[str
 	return unwrapError(p.name, resp.Err)
 }
 
-func (p *PluginRPC) SetComponentConfig(component string, data map[string]any) error {
+func (p *PluginRPC) SetComponentConfig(component string, version string, meta schema.Meta, data map[string]any) error {
 	param := SetComponentConfigInput{
 		Component: component,
 		Data:      makeNil(data),
@@ -140,7 +118,7 @@ func (p *PluginRPC) SetComponentConfig(component string, data map[string]any) er
 	return unwrapError(p.name, resp.Err)
 }
 
-func (p *PluginRPC) SetComponentEndpointsConfig(component string, endpoints map[string]string) error {
+func (p *PluginRPC) SetComponentEndpointsConfig(component string, meta schema.Meta, endpoints map[string]string) error {
 	param := SetComponentEndpointsConfigInput{
 		Component: component,
 		Endpoints: endpoints,
@@ -151,19 +129,6 @@ func (p *PluginRPC) SetComponentEndpointsConfig(component string, endpoints map[
 		return err
 	}
 	return unwrapError(p.name, resp.Err)
-}
-
-func (p *PluginRPC) RenderTerraformStateBackend(site string) (string, error) {
-	param := RenderTerraformStateBackendInput{
-		Site: site,
-	}
-	resp := RenderTerraformStateBackendOutput{}
-	err := p.client.Call("Plugin.RenderTerraformStateBackend", param, &resp)
-	if err != nil {
-		p.logger.Error(err.Error(), "error", err)
-		return "", err
-	}
-	return resp.Result, unwrapError(p.name, resp.Err)
 }
 
 func (p *PluginRPC) RenderTerraformProviders(site string) (string, error) {

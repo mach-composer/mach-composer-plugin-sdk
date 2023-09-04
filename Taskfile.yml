@@ -1,0 +1,19 @@
+version: '3'
+
+tasks:
+  format:
+    cmds:
+      - go fmt ./...
+
+  test:
+    cmds:
+      - go test -v ./...
+
+  coverage:
+    cmds:
+      - go test -race -coverprofile=coverage.txt -covermode=atomic -coverpkg=./... ./...
+      - go tool cover -func=coverage.txt
+
+  lint:
+    cmds:
+      - golangci-lint run --timeout=5m

@@ -13,13 +13,8 @@ type PluginRPCServer struct {
 	logger  hclog.Logger
 }
 
-func (s *PluginRPCServer) Identifier(args any, resp *string) error {
+func (s *PluginRPCServer) Identifier(_ any, resp *string) error {
 	*resp = s.adapter.Identifier()
-	return nil
-}
-
-func (s *PluginRPCServer) IsEnabled(args any, resp *bool) error {
-	*resp = s.adapter.IsEnabled()
 	return nil
 }
 
@@ -29,60 +24,45 @@ func (s *PluginRPCServer) Configure(args ConfigureInput, resp *ErrorOutput) erro
 	return nil
 }
 
-func (s *PluginRPCServer) GetValidationSchema(args any, resp *GetValidationSchemaOutput) error {
+func (s *PluginRPCServer) GetValidationSchema(_ any, resp *GetValidationSchemaOutput) error {
 	result, err := s.adapter.GetValidationSchema()
 	resp.Result = *result
 	resp.Err = wrapError(err)
 	return nil
 }
 
-func (s *PluginRPCServer) SetRemoteStateBackend(args SetRemoteStateBackendInput, resp *ErrorOutput) error {
-	err := s.adapter.SetRemoteStateBackend(args.Data)
-	resp.Err = wrapError(err)
-	return nil
-}
-
 func (s *PluginRPCServer) SetGlobalConfig(args SetGlobalConfigInput, resp *ErrorOutput) error {
-	err := s.adapter.SetGlobalConfig(args.Data)
+	err := s.adapter.SetGlobalConfig(args.Meta, args.Data)
 	resp.Err = wrapError(err)
 	return nil
 }
 
 func (s *PluginRPCServer) SetSiteConfig(args SetSiteConfigInput, resp *ErrorOutput) error {
-	err := s.adapter.SetSiteConfig(args.Name, args.Data)
+	err := s.adapter.SetSiteConfig(args.Name, args.Meta, args.Data)
 	resp.Err = wrapError(err)
 	return nil
 }
 
 func (s *PluginRPCServer) SetSiteComponentConfig(args SetSiteComponentConfigInput, resp *SetSiteComponentConfigOutput) error {
-	err := s.adapter.SetSiteComponentConfig(args.Site, args.Component, args.Data)
+	err := s.adapter.SetSiteComponentConfig(args.Site, args.Component, args.Meta, args.Data)
 	resp.Err = wrapError(err)
 	return nil
 }
 
 func (s *PluginRPCServer) SetSiteEndpointConfig(args SetSiteEndpointsConfigInput, resp *SetSiteEndpointsConfigOutput) error {
-	err := s.adapter.SetSiteEndpointConfig(args.Site, args.Name, args.Data)
+	err := s.adapter.SetSiteEndpointConfig(args.Site, args.Name, args.Meta, args.Data)
 	resp.Err = wrapError(err)
 	return nil
 }
 
 func (s *PluginRPCServer) SetComponentConfig(args SetSiteComponentConfigInput, resp *SetSiteComponentConfigOutput) error {
-	err := s.adapter.SetComponentConfig(args.Component, args.Data)
+	err := s.adapter.SetComponentConfig(args.Component, args.Version, args.Meta, args.Data)
 	resp.Err = wrapError(err)
 	return nil
 }
 
 func (s *PluginRPCServer) SetComponentEndpointsConfig(args SetComponentEndpointsConfigInput, resp *SetSiteComponentConfigOutput) error {
-	err := s.adapter.SetComponentEndpointsConfig(args.Component, args.Endpoints)
-	resp.Err = wrapError(err)
-	return nil
-}
-
-func (s *PluginRPCServer) RenderTerraformStateBackend(
-	args RenderTerraformStateBackendInput,
-	resp *RenderTerraformStateBackendOutput) error {
-	result, err := s.adapter.RenderTerraformStateBackend(args.Site)
-	resp.Result = result
+	err := s.adapter.SetComponentEndpointsConfig(args.Component, args.Meta, args.Endpoints)
 	resp.Err = wrapError(err)
 	return nil
 }

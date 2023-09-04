@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/mach-composer/mach-composer-plugin-sdk/schema"
+	"github.com/mach-composer/mach-composer-plugin-sdk/v1/schema"
 )
 
 func TestPluginRPC(t *testing.T) {
@@ -30,8 +30,8 @@ func TestPluginRPC(t *testing.T) {
 	raw, err := client.Dispense("MachComposerPlugin")
 	require.NoError(t, err)
 
-	plugin, ok := raw.(schema.MachComposerPlugin)
+	p, ok := raw.(schema.MachComposerPlugin)
 	require.True(t, ok)
 
-	assert.Equal(t, plugin.Identifier(), "test")
+	assert.Equal(t, p.Identifier(), "test")
 }
