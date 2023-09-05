@@ -9,6 +9,7 @@ type MachComposerPlugin interface {
 
 	GetValidationSchema() (*ValidationSchema, error)
 
+	//Deprecated: this method is not used anymore in CLI 2.10.0 or newer. Instead, state is managed by the CLI
 	SetRemoteStateBackend(data map[string]any) error
 
 	SetGlobalConfig(data map[string]any) error
@@ -23,15 +24,12 @@ type MachComposerPlugin interface {
 
 	SetComponentEndpointsConfig(component string, data map[string]string) error
 
-	// Render remote state configuration
+	//Deprecated: this method is not used anymore in CLI 2.10.0 or newer. Instead, state is managed by the CLI
 	RenderTerraformStateBackend(site string) (string, error)
 
-	// Render all required terraform providers
 	RenderTerraformProviders(site string) (string, error)
 
-	// Render global resources
 	RenderTerraformResources(site string) (string, error)
 
-	// Render component
 	RenderTerraformComponent(site string, component string) (*ComponentSchema, error)
 }
