@@ -7,8 +7,8 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 
-	"github.com/mach-composer/mach-composer-plugin-sdk/protocol"
-	"github.com/mach-composer/mach-composer-plugin-sdk/schema"
+	"github.com/mach-composer/mach-composer-plugin-sdk/v2/protocol"
+	"github.com/mach-composer/mach-composer-plugin-sdk/v2/schema"
 )
 
 func init() {
@@ -17,6 +17,7 @@ func init() {
 	gob.Register(protocol.PluginError{})
 }
 
+// ServePlugin serves the plugin
 func ServePlugin(a schema.MachComposerPlugin) {
 	logger := hclog.New(&hclog.LoggerOptions{
 		Name:       a.Identifier(),
