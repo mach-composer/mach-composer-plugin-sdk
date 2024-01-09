@@ -60,7 +60,6 @@ type SetComponentEndpointsConfigOutput struct {
 
 type SetSiteConfigInput struct {
 	Name string
-	Tags map[string]string
 	Data map[string]any
 }
 
