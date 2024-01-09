@@ -1,7 +1,7 @@
 package protocol
 
 import (
-	"github.com/mach-composer/mach-composer-plugin-sdk/schema"
+	"github.com/mach-composer/mach-composer-plugin-sdk/v2/schema"
 )
 
 type ConfigureInput struct {
@@ -14,15 +14,12 @@ type GetValidationSchemaOutput struct {
 	Err    *PluginError
 }
 
-type SetRemoteStateBackendInput struct {
-	Data map[string]any
-}
-
 type SetGlobalConfigInput struct {
 	Data map[string]any
 }
 
 type SetSiteComponentConfigInput struct {
+	Version   string
 	Site      string
 	Component string
 	Data      map[string]any
@@ -44,6 +41,7 @@ type SetSiteEndpointsConfigOutput struct {
 
 type SetComponentConfigInput struct {
 	Component string
+	Version   string
 	Data      map[string]any
 }
 
@@ -63,15 +61,6 @@ type SetComponentEndpointsConfigOutput struct {
 type SetSiteConfigInput struct {
 	Name string
 	Data map[string]any
-}
-
-type RenderTerraformStateBackendInput struct {
-	Site string
-}
-
-type RenderTerraformStateBackendOutput struct {
-	Result string
-	Err    *PluginError
 }
 
 type RenderTerraformProvidersInput struct {
