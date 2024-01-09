@@ -1,6 +1,10 @@
 # mach-composer-plugin-sdk
 SDK to create plugins for Mach Composer
 
+## Migrating from v1 to v2
+
+- The only major change between v1 and v2 is the addition of the `version` field to `SetComponentConfig`. If this field is added to the plugin it will be compliant with the v2 version
+
 
 ## Writing plugins
 Mach Composer utiltizes the [go-plugin](https://github.com/hashicorp/go-plugin)
