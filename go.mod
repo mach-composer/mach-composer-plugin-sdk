@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/hashicorp/go-hclog v1.6.3
-	github.com/hashicorp/go-plugin v1.6.1
+	github.com/hashicorp/go-plugin v1.6.2
 	github.com/stretchr/testify v1.9.0
 	github.com/xeipuuv/gojsonschema v1.2.0
 )
@@ -25,7 +25,6 @@ require (
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
-	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	github.com/oklog/run v1.1.0 // indirect
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	golang.org/x/net v0.17.0 // indirect
