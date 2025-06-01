@@ -1,6 +1,6 @@
 module github.com/mach-composer/mach-composer-plugin-sdk/v2
 
-go 1.20
+go 1.21
 
 require (
 	github.com/flosch/pongo2/v5 v5.0.0
@@ -10,7 +10,7 @@ require (
 	github.com/hashicorp/hcl/v2 v2.23.0
 	github.com/stretchr/testify v1.10.0
 	github.com/xeipuuv/gojsonschema v1.2.0
-	github.com/zclconf/go-cty v1.16.2
+	github.com/zclconf/go-cty v1.16.3
 )
 
 require (
