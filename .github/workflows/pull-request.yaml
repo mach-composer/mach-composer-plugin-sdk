@@ -32,16 +32,12 @@ jobs:
           verbose: true
 
   changie:
-    outputs:
-      released: ${{ steps.changie.outputs.released }}
-      version: ${{ steps.changie.outputs.version }}
     runs-on: ubuntu-latest
     needs: test
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     permissions:
       contents: write
       pull-requests: write
-      actions: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -53,9 +49,4 @@ jobs:
         uses: labd/changie-release-action@059406879b04f6e073547b325fbbff9a573038e3 # v2.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-
-  release:
-    needs: changie
-    if: needs.changie.outputs.released == 'true'
-    uses: ./.github/workflows/release.yaml
-    secrets: inherit
+          create-release: true
